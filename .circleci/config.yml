@@ -5,5 +5,5 @@ jobs:
     - image: alpine:3.10.3
     steps:
     - checkout
-    - run: echo << pipeline.trigger.branch >>
-    - run: echo << pipeline.pull_request.target_branch >>
+    - run: echo << pipeline.trigger >>
+    - run: echo << pipeline.pull_request >>
