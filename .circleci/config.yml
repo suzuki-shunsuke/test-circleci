@@ -1,8 +1,5 @@
 version: 2.1
 jobs:
   build:
-    docker:
-    - image: alpine:3.10.3
     steps:
-    - checkout
-    - run: "echo << pipeline >>"
+      - run: echo "The UUID of this pipeline is << pipeline.id >>"
