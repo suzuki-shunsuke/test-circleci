@@ -33,8 +33,23 @@ jobs:
       - setup_remote_docker
       - run: |
           docker version
-          docker pull alpine:3.10.3
-          sleep 5
+          docker run -ti alpine:3.10.3 sleep 3
+          echo test
+          ls -A
+          cat foo/setup.txt
+  test2:
+    docker:
+      - image: docker:19.03.4
+    steps:
+      - run: |
+          apk add ca-certificates
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - setup_remote_docker
+      - run: |
+          docker version
+          docker run -ti alpine:3.10.3 sleep 5
           echo test
           ls -A
           cat foo/setup.txt
@@ -44,5 +59,8 @@ workflows:
     jobs:
       - setup
       - test:
+          requires:
+            - setup
+      - test2:
           requires:
             - setup
