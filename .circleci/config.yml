@@ -32,6 +32,7 @@ jobs:
       - run: |
           sleep 5
           echo test
+          ls
           cat setup.txt
 workflows:
   version: 2
