@@ -16,7 +16,7 @@ jobs:
           root: .
           # Must be relative path from root
           paths:
-            - *
+            - "*"
   test:
     docker:
       - image: alpine:3.10.3
