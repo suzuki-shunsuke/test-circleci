@@ -2,7 +2,7 @@
 jobs:
   setup:
     docker:
-      - image: alpine:3.10.3
+      - image: docker:19.03.4
     steps:
       - checkout
       - run: |
@@ -30,7 +30,10 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - setup_remote_docker
       - run: |
+          docker version
+          docker pull alpine:3.10.3
           sleep 5
           echo test
           ls -A
