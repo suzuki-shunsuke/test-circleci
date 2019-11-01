@@ -23,7 +23,7 @@ jobs:
             - "*"
   test:
     docker:
-      - image: alpine:3.10.3
+      - image: docker:19.03.4
     steps:
       - run: |
           apk add ca-certificates
