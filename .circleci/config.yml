@@ -15,8 +15,8 @@ jobs:
           # taken to be the root directory of the workspace.
           root: .
           # Must be relative path from root
-          # paths:
-          #   - echo-output
+          paths:
+            - .
   test:
     docker:
       - image: alpine:3.10.3
