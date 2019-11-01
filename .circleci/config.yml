@@ -33,8 +33,8 @@ jobs:
       - run: |
           sleep 5
           echo test
-          ls
-          cat setup.txt
+          ls -A
+          cat foo/setup.txt
 workflows:
   version: 2
   build:
