@@ -7,8 +7,7 @@ jobs:
       - checkout
       - run: |
           sleep 3
-          # Error uploading workspace archive: RequestError: send request failed
-          # x509: certificate signed by unknown authority
+          # https://support.circleci.com/hc/en-us/articles/360016505753-Resolve-Certificate-Signed-By-Unknown-Authority-error-in-Alpine-images
           apk add ca-certificates
           echo build
           mkdir foo
