@@ -9,6 +9,7 @@ jobs:
           sleep 3
           # https://support.circleci.com/hc/en-us/articles/360016505753-Resolve-Certificate-Signed-By-Unknown-Authority-error-in-Alpine-images
           apk add ca-certificates
+          apk add unknown
           echo build
           mkdir foo
           echo setup > foo/setup.txt
