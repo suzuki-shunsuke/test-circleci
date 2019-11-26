@@ -1,0 +1,66 @@
+---
+jobs:
+  setup:
+    docker:
+      - image: docker:19.03.4
+    steps:
+      - checkout
+      - run: |
+          sleep 3
+          # https://support.circleci.com/hc/en-us/articles/360016505753-Resolve-Certificate-Signed-By-Unknown-Authority-error-in-Alpine-images
+          apk add ca-certificates
+          apk add unknown
+          echo build
+          mkdir foo
+          echo setup > foo/setup.txt
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job. 
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: .
+          # Must be relative path from root
+          paths:
+            - "*"
+  test:
+    docker:
+      - image: docker:19.03.4
+    steps:
+      - run: |
+          apk add ca-certificates
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - setup_remote_docker
+      - run: |
+          docker version
+          docker run -ti alpine:3.10.3 sleep 3
+          echo test
+          ls -A
+          cat foo/setup.txt
+  test2:
+    docker:
+      - image: docker:19.03.4
+    steps:
+      - run: |
+          apk add ca-certificates
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - setup_remote_docker
+      - run: |
+          docker version
+          docker run -ti alpine:3.10.3 sleep 5
+          echo test
+          ls -A
+          cat foo/setup.txt
+workflows:
+  version: 2
+  build:
+    jobs:
+      - setup
+      - test:
+          requires:
+            - setup
+      - test2:
+          requires:
+            - setup
