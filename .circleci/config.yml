@@ -1,0 +1,13 @@
+version: 2
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+jobs:
+  build:
+    docker:
+      - image: alpine:3.10.3
+    steps:
+      - run:
+          command: echo $CIRCLE_PULL_REQUESTS
