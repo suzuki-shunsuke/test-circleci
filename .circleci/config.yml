@@ -8,6 +8,6 @@ workflows:
 jobs:
   build:
     docker:
-      - image: alpine:3.10.3
+      - image: plugins/git
     steps:
       - git-shallow-clone/checkout_shallow
