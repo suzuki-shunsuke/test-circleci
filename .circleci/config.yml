@@ -1,6 +1,7 @@
-version: 2
+version: 2.1
+orbs:
+  git-shallow-clone: guitarrapc/git-shallow-clone@1.0.1
 workflows:
-  version: 2
   build:
     jobs:
       - build
@@ -9,5 +10,4 @@ jobs:
     docker:
       - image: alpine:3.10.3
     steps:
-      - run:
-          command: echo $CIRCLE_PULL_REQUESTS
+      - git-shallow-clone
