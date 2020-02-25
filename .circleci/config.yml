@@ -10,4 +10,4 @@ jobs:
     docker:
       - image: alpine:3.10.3
     steps:
-      - git-shallow-clone
+      - git-shallow-clone/checkout_shallow
