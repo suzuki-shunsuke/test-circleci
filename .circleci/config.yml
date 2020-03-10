@@ -6,6 +6,15 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - build:
+          name: release
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
 jobs:
   build:
     docker:
