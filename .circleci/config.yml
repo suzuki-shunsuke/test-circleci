@@ -1,25 +1,14 @@
 version: 2.1
+orbs:
+  git-shallow-clone: guitarrapc/git-shallow-clone@1.2.2
+
 workflows:
   build:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
-      - build:
-          name: release
-          requires:
-            - build
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore: /.*/
+      - build
 jobs:
   build:
     docker:
-      - image: golang:1.14.0
+      - image: plugins/git
     steps:
-      - checkout
-      - run:
-          command: go run main.go
+      - git-shallow-clone/checkout_shallow
