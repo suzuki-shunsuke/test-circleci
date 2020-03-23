@@ -11,7 +11,6 @@ jobs:
     steps:
       - checkout_shallow:
           clone_options: "--shallow-since '1 years ago'"
-
 commands:
   checkout_shallow:
     description: checkout with git shallow clone. Support Alpine, Ubuntu, Debian and
@@ -103,7 +102,7 @@ commands:
           then
             clone_opts="--depth << parameters.depth >>"
           fi
-          git clone $clone_opts $CIRCLE_REPOSITORY_URL "<< parameters.path >>"
+          eval git clone $clone_opts $CIRCLE_REPOSITORY_URL "<< parameters.path >>"
           cd "<< parameters.path >>"
 
           fetch_opts="--depth << parameters.fetch_depth >>"
