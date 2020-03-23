@@ -96,11 +96,11 @@ commands:
           git config --global url."ssh://git@github.com".insteadOf "https://github.com" || true
           git config --global gc.auto 0 || true
 
-          clone_opts="--depth << parameters.depth >>"
+          clone_opts="<< parameters.clone_options >>"
           # checkout
-          if [ -n "<< parameters.clone_options >>" ]
+          if [ -z "$clone_opts" ]
           then
-            clone_opts="<< parameters.clone_options >>"
+            clone_opts="--depth << parameters.depth >>"
           fi
           git clone $clone_opts $CIRCLE_REPOSITORY_URL "<< parameters.path >>"
           cd "<< parameters.path >>"
