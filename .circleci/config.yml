@@ -96,8 +96,8 @@ commands:
           git config --global url."ssh://git@github.com".insteadOf "https://github.com" || true
           git config --global gc.auto 0 || true
 
-          clone_opts=$(echo << parameters.clone_options >>)
-          echo $clone_opts
+          clone_opts="<< parameters.clone_options >>"
+          echo ${#clone_opts}
           # checkout
           if [ -z "$clone_opts" ]
           then
