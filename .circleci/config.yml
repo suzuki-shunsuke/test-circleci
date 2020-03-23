@@ -10,7 +10,7 @@ jobs:
       - image: plugins/git
     steps:
       - checkout_shallow:
-          clone_options: '--shallow-since "1 years ago"'
+          clone_options: "--shallow-since '1 years ago'"
 
 commands:
   checkout_shallow:
