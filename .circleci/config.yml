@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  git-shallow-clone: guitarrapc/git-shallow-clone@1.2.2
 
 workflows:
   build:
@@ -11,5 +9,131 @@ jobs:
     docker:
       - image: plugins/git
     steps:
-      - git-shallow-clone/checkout_shallow:
+      - checkout_shallow:
           clone_options: '--shallow-since "1 years ago"'
+
+commands:
+  checkout_shallow:
+    description: checkout with git shallow clone. Support Alpine, Ubuntu, Debian and
+      others.
+    parameters:
+      clone_options:
+        default: ""
+        description: |
+          git clone options you want to add such as '--depth 1 --verbose' and '--shallow-since "5 days ago"'
+        type: string
+      depth:
+        default: 1
+        description: |
+          Limit fetch depth to the specified number of commit from a remote branch history. Refer git fetch documentation for more information. If the parameter "clone_options" is set, this parameter is ignored.
+        type: integer
+      fetch_depth:
+        default: 10
+        description: |
+          Addtional fetch depth fetch depth to the specified number of commit from a remote branch history. Pass more number then depth when you want to check futher commit history. If the parameter "fetch_options" is set, this parameter is ignored.
+        type: integer
+      fetch_options:
+        default: ""
+        description: |
+          git fetch options you want to add such as '--depth 1 --verbose' and '--shallow-since "5 days ago"' Don't set '--force' option because it is set automatically. And in case of pull request, '-t' is also set automatically.
+        type: string
+      keyscan_bitbucket:
+        default: false
+        description: |
+          Pass `true` to dynamically get ssh-rsa from `bitbucket.org`.
+        type: boolean
+      keyscan_github:
+        default: false
+        description: |
+          Pass `true` to dynamically get ssh-rsa from `github.com`.
+        type: boolean
+      path:
+        default: .
+        description: |
+          Checkout directory (default: job’s working_directory)
+        type: string
+    steps:
+    - run:
+        command: |
+          #!/bin/sh
+          set -ex
+          # Workaround old docker images with incorrect $HOME
+          # check https://github.com/docker/docker/issues/2968 for details
+          if [ "${HOME}" = "/" ]
+          then
+            export HOME=$(getent passwd $(id -un) | cut -d: -f6)
+          fi
+
+          # known_hosts
+          mkdir -p ~/.ssh
+          if [ -x "$(command -v ssh-keyscan)" ] && ([ "<< parameters.keyscan_github >>" == "true" ] || [ "<< parameters.keyscan_bitbucket >>" == "true" ])
+          then
+            if [ "<< parameters.keyscan_github >>" == "true" ]
+            then
+              ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+            fi
+            if [ "<< parameters.keyscan_bitbucket >>" == "true" ]
+            then
+              ssh-keyscan -H bitbucket.org >> ~/.ssh/known_hosts
+            fi
+          fi
+          if [ "<< parameters.keyscan_github >>" != "true" ]
+          then
+            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+          ' >> ~/.ssh/known_hosts
+          fi
+          if [ "<< parameters.keyscan_bitbucket >>" != "true" ]
+          then
+            echo 'bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+          ' >> ~/.ssh/known_hosts
+          fi
+
+          (umask 077; touch ~/.ssh/id_rsa)
+          chmod 0600 ~/.ssh/id_rsa
+          (cat $CHECKOUT_KEY > ~/.ssh/id_rsa)
+
+          # use git+ssh instead of https
+          git config --global url."ssh://git@github.com".insteadOf "https://github.com" || true
+          git config --global gc.auto 0 || true
+
+          clone_opts="--depth << parameters.depth >>"
+          # checkout
+          if [ -n "<< parameters.clone_options >>" ]
+          then
+            clone_opts="<< parameters.clone_options >>"
+          fi
+          git clone $clone_opts $CIRCLE_REPOSITORY_URL "<< parameters.path >>"
+          cd "<< parameters.path >>"
+
+          fetch_opts="--depth << parameters.fetch_depth >>"
+          if [ -n "<< parameters.fetch_options >>" ]
+          then
+            fetch_opts="<< parameters.fetch_options >>"
+          fi
+          # Fetch remote and check the commit ID of the checked out code
+          if [ -n "$CIRCLE_TAG" ]
+          then
+            # tag
+            git fetch -t $fetch_opts --force origin "refs/tags/${CIRCLE_TAG}"
+          elif [[ $(echo $CIRCLE_BRANCH | grep -e ^pull\/*) ]] # sh version of bash `elif [[ "$CIRCLE_BRANCH" =~ ^pull\/* ]]`
+          then
+            # pull request
+            git fetch $fetch_opts --force origin "${CIRCLE_BRANCH}/head:remotes/origin/${CIRCLE_BRANCH}"
+          else
+            # others
+            git fetch $fetch_opts --force origin "$CIRCLE_BRANCH:remotes/origin/$CIRCLE_BRANCH"
+          fi
+
+          # Check the commit ID of the checked out code
+          if [ -n "$CIRCLE_TAG" ]
+          then
+            git reset --hard "$CIRCLE_SHA1"
+            git checkout -q "$CIRCLE_TAG"
+          elif [ -n "$CIRCLE_BRANCH" ] && [ "$CIRCLE_BRANCH" != 'HEAD' ]
+          then
+            git reset --hard "$CIRCLE_SHA1"
+            git checkout -q -B "$CIRCLE_BRANCH"
+          fi
+
+          git reset --hard "$CIRCLE_SHA1"
+        name: Checkout code shallow
