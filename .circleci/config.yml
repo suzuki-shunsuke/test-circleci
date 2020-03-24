@@ -14,3 +14,4 @@ jobs:
     steps:
       - git-shallow-clone/checkout_advanced:
           clone_options: '--shallow-since "1 years ago"'
+          fetch_options: '--shallow-since "1 years ago"'
