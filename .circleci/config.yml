@@ -1,65 +1,5 @@
 version: 2.1
 
-commands:
-  run_ignore_error:
-    description: |
-      The wrapper of built-in `run` command.
-      Run command like `run`, but even if the command is failed the step succeeds.
-    parameters:
-      command:
-        type: string
-        description: |
-          Command to run via the shell
-      run_name:
-        type: string
-        default: ""
-        description: |
-          Title of the step to be shown in the CircleCI UI (default: full command)
-      shell:
-        type: string
-        default: ""
-        description: |
-          Shell to use for execution command
-      background:
-        type: boolean
-        default: false
-        description: |
-          Whether or not this step should run in the background
-      working_directory:
-        type: string
-        default: ""
-        description: |
-          In which directory to run this step
-      no_output_timeout:
-        type: string
-        default: "10m"
-        description: |
-          Elapsed time the command can run without output. The string is a decimal with unit suffix, such as “20m”, “1.25h”, “5s” (default: 10 minutes)
-      when:
-        type: enum
-        enum: ["always", "on_success", "on_fail"]
-        default: "on_success"
-        description: |
-          Specify when to enable or disable the step.
-
-    steps:
-      - run:
-          name: << parameters.run_name >>
-          background: << parameters.background >>
-          working_directory: << parameters.working_directory >>
-          no_output_timeout: << parameters.no_output_timeout >>
-          when: << parameters.when >>
-          command: |
-            <<# parameters.shell >>
-              echo '<< parameters.command >>' | << parameters.shell >> || :
-              exit 0
-            <</ parameters.shell >>
-            if [ -f /bin/bash ]; then
-              echo '<< parameters.command >>' | /bin/bash -eo pipefail || :
-              exit 0
-            fi
-            echo '<< parameters.command >>' | /bin/sh -eo pipefail || :
-
 workflows:
   build:
     jobs:
@@ -69,19 +9,11 @@ jobs:
     docker:
       - image: alpine:3.11.3
     steps:
-      - run_ignore_error:
-          command: |
-            pwd
-            for i in 1 2 3; do
-              echo "$i"
-            done
-            false
       - run:
           command: |
-            sh -c '
-            pwd
-            for i in 1 2 3; do
-              echo "$i"
-            done
-            false
-            ' || :
+            echo_error() {
+              COLOR_1="\e[31;1m"
+              COLOR_OFF="\e[m"
+              echo -e "${COLOR_1}$*${COLOR_OFF}" >&2
+            }
+            echo_error hello
