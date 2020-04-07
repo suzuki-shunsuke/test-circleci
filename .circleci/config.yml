@@ -45,13 +45,20 @@ commands:
     steps:
       - run:
           name: << parameters.run_name >>
-          shell: << parameters.shell >>
           background: << parameters.background >>
           working_directory: << parameters.working_directory >>
           no_output_timeout: << parameters.no_output_timeout >>
           when: << parameters.when >>
           command: |
-            sh -c '<< parameters.command >>'
+            <<# parameters.shell >>
+              echo '<< parameters.command >>' | << parameters.shell >> || :
+              exit 0
+            <</ parameters.shell >>
+            if [ -f /bin/bash ]; then
+              echo '<< parameters.command >>' | /bin/bash -eo pipefail || :
+              exit 0
+            fi
+            echo '<< parameters.command >>' | /bin/sh -eo pipefail || :
 
 workflows:
   build:
@@ -69,3 +76,12 @@ jobs:
               echo "$i"
             done
             false
+      - run:
+          command: |
+            sh -c '
+            pwd
+            for i in 1 2 3; do
+              echo "$i"
+            done
+            false
+            ' || :
