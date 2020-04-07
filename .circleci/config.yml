@@ -1,17 +1,71 @@
 version: 2.1
 
-orbs:
-  git-shallow-clone: guitarrapc/git-shallow-clone@2.0.0
+commands:
+  run_ignore_error:
+    description: |
+      The wrapper of built-in `run` command.
+      Run command like `run`, but even if the command is failed the step succeeds.
+    parameters:
+      command:
+        type: string
+        description: |
+          Command to run via the shell
+      run_name:
+        type: string
+        default: ""
+        description: |
+          Title of the step to be shown in the CircleCI UI (default: full command)
+      shell:
+        type: string
+        default: ""
+        description: |
+          Shell to use for execution command
+      background:
+        type: boolean
+        default: false
+        description: |
+          Whether or not this step should run in the background
+      working_directory:
+        type: string
+        default: ""
+        description: |
+          In which directory to run this step
+      no_output_timeout:
+        type: string
+        default: "10m"
+        description: |
+          Elapsed time the command can run without output. The string is a decimal with unit suffix, such as “20m”, “1.25h”, “5s” (default: 10 minutes)
+      when:
+        type: enum
+        enum: ["always", "on_success", "on_fail"]
+        default: "on_success"
+        description: |
+          Specify when to enable or disable the step.
+
+    steps:
+      - run:
+          name: << parameters.run_name >>
+          shell: << parameters.shell >>
+          background: << parameters.background >>
+          working_directory: << parameters.working_directory >>
+          no_output_timeout: << parameters.no_output_timeout >>
+          when: << parameters.when >>
+          command: |
+            sh -c '<< parameters.command >>'
 
 workflows:
   build:
     jobs:
-      - build
+      - hello
 jobs:
-  build:
+  hello:
     docker:
-      - image: plugins/git
+      - image: alpine:3.11.3
     steps:
-      - git-shallow-clone/checkout_advanced:
-          clone_options: '--shallow-since "1 years ago"'
-          fetch_options: '--shallow-since "1 years ago"'
+      - run_ignore_error:
+          command: |
+            pwd
+            for i in 1 2 3; do
+              echo "$i"
+            done
+            false
