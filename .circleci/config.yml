@@ -3,17 +3,36 @@ version: 2.1
 workflows:
   build:
     jobs:
-      - hello
+      - build
 jobs:
-  hello:
+  build:
     docker:
-      - image: alpine:3.11.3
+      - image: circleci/circleci-cli:0.1.6949-alpine
     steps:
+      - restore_cache:
+          keys:
+            - repo-master-v1
+      - checkout
       - run:
+          name: debug git sha1
           command: |
-            echo_error() {
-              COLOR_1="\e[31;1m"
-              COLOR_OFF="\e[m"
-              echo -e "${COLOR_1}$*${COLOR_OFF}" >&2
-            }
-            echo_error hello
+            git rev-list --count --left-right origin/master...HEAD
+      - run:
+          name: git fetch origin master
+          command: |
+            git fetch origin master
+      - run:
+          name: debug git sha1
+          command: |
+            git rev-list --count --left-right origin/master...HEAD
+      - run:
+          name: stop jobs if the branch isn't master
+          command: |
+            if [ "${CIRCLE_BRANCH:-}" != "master" ]; then
+              circleci step halt
+            fi
+      - save_cache:
+          name: Save cache of monorepo
+          key: repo-master-v1
+          paths:
+            - .
