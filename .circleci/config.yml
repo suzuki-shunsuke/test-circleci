@@ -11,5 +11,7 @@ jobs:
     steps:
       - checkout
       - run:
+          name: check the SHA1 of master
           command: |
             git show-branch master
+            git show-branch origin/master
