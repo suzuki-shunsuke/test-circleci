@@ -14,6 +14,7 @@ jobs:
           command: |
             echo "#!/bin/sh" > /usr/local/bin/shell-ignore-failure
             echo 'cat - | sh || :' >> /usr/local/bin/shell-ignore-failure
+            cat /usr/local/bin/shell-ignore-failure
             chmod +x /usr/local/bin/shell-ignore-failure
       - run:
           name: ignore failure
