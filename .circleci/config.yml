@@ -11,7 +11,8 @@ jobs:
     steps:
       - run:
           name: ignore failure
-          shell: /bin/sh || true
+          # shell: /bin/sh || true
+          shell: /bin/sh -c "sh || true"
           command: |
             echo start
             false
