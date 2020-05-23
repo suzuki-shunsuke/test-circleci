@@ -10,15 +10,9 @@ jobs:
       - image: alpine:3.11.6
     steps:
       - run:
-          name: Install durl
-          command: |
-            apk add curl
-            curl -L https://github.com/suzuki-shunsuke/dd-time/releases/download/v0.1.1/dd-time_0.1.1_linux_amd64.tar.gz | tar xvzf - dd-time -C /usr/local/bin
-            chmod +x /usr/local/bin/dd-time
-      - run:
-          name: test dd-time
-          shell: /usr/local/bin/dd-time --metric-name dd_time.test -- sh -eo pipefail
+          name: ignore failure
+          shell: /bin/sh || true
           command: |
             echo start
-            sleep 5
+            false
             echo end
