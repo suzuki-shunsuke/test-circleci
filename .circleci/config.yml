@@ -20,7 +20,7 @@ jobs:
       - run:
           name: ignore failure
           shell: /usr/local/bin/shell-ignore-failure
-          command: |
+          command: >
             echo start
             false
             echo end
