@@ -10,9 +10,13 @@ jobs:
       - image: alpine:3.11.6
     steps:
       - run:
+          name: install shell-ignore-failure
+          command: |
+            echo "sh -eo pipefail || :" > /usr/local/bin/shell-ignore-failure
+            chmod +x /usr/local/bin/shell-ignore-failure
+      - run:
           name: ignore failure
-          # shell: /bin/sh || true
-          shell: /bin/sh -c "sh || true"
+          shell: /usr/local/bin/shell-ignore-failure
           command: |
             echo start
             false
