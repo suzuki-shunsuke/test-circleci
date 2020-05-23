@@ -17,7 +17,7 @@ jobs:
             chmod +x /usr/local/bin/shell-ignore-failure
       - run:
           name: ignore failure
-          shell: /usr/local/bin/shell-ignore-failure # -eo pipefail
+          shell: /usr/local/bin/shell-ignore-failure
           command: |
             echo start
             false
