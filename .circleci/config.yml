@@ -3,15 +3,27 @@ version: 2.1
 workflows:
   build:
     jobs:
-      - build
+      - save-circle-dd-bench
+      - restore-circle-dd-bench:
+          requires:
+            - save-circle-dd-bench
 jobs:
-  build:
+  save-circle-dd-bench:
+    docker:
+      - image: quipper/circleci-base:0cd75e9f1844e47073e7dc31985e597b2dffc37f
+    steps:
+      - save_cache:
+          key: circle-dd-bench
+          paths:
+            - /usr/local/bin/circle-dd-bench
+  restore-circle-dd-bench:
     docker:
       - image: alpine:3.11.6
     steps:
+      - restore_cache:
+          keys:
+            - circle-dd-bench
       - run:
-          name: test shell
-          shell: grep hello
-          command: |
-            hello
-            foo
+          name: circle-dd-bench version
+          command:
+            which circle-dd-bench
