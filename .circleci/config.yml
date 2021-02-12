@@ -1,5 +1,4 @@
 version: 2.1
-
 workflows:
   build:
     jobs:
@@ -11,14 +10,16 @@ workflows:
 jobs:
   foo:
     docker:
-      - image: alpine:3.11.6
+      - image: alpine:3.13.1
     steps:
       - run:
           name: foo
-          command: echo foo
+          command: |
+            apk add git
+      - checkout
   bar:
     docker:
-      - image: alpine:3.11.6
+      - image: alpine:3.13.1
     steps:
       - run:
           name: bar
