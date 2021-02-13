@@ -3,10 +3,9 @@ workflows:
   build:
     jobs:
       - foo
-      - bar
-      - foo:
+      - bar:
           requires:
-            - bar
+            - foo
 jobs:
   foo:
     docker:
@@ -16,12 +15,24 @@ jobs:
           name: foo
           command: |
             pwd
-            apk add git
+            apk add git openssh
       - checkout
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .circleci
   bar:
     docker:
       - image: alpine:3.13.1
     steps:
       - run:
           name: bar
-          command: echo bar
+          command: |
+            apk add ca-certificates tree
+            mkdir /tmp/workspace
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: bar
+          command: |
+            tree -a /tmp/workspace
