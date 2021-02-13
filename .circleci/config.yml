@@ -21,6 +21,10 @@ jobs:
           root: .
           paths:
             - .circleci
+      - persist_to_workspace:
+          root: /root
+          paths:
+            - project/yoo
   bar:
     docker:
       - image: alpine:3.13.1
