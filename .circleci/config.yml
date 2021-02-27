@@ -3,9 +3,10 @@ workflows:
   build:
     jobs:
       - foo:
-          branches:
-            ignore:
-              - /.*/test/
+          filters:
+            branches:
+              ignore:
+                - /.*/test/
 jobs:
   foo:
     docker:
