@@ -1,13 +1,11 @@
 version: 2.1
-
 workflows:
   build:
     jobs:
-      - foo
-      - bar
       - foo:
-          requires:
-            - bar
+          branches:
+            ignore:
+              - /.*/test/
 jobs:
   foo:
     docker:
@@ -16,10 +14,3 @@ jobs:
       - run:
           name: foo
           command: echo foo
-  bar:
-    docker:
-      - image: alpine:3.11.6
-    steps:
-      - run:
-          name: bar
-          command: echo bar
