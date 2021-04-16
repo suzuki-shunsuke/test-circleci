@@ -10,12 +10,12 @@ jobs:
       - image: alpine:3.11.6
     steps:
       - run:
-          name: foo
+          name: install git
           command: |
             apk add git openssh
       - checkout
       - run:
-          name: foo
+          name: checkout merge branch
           command: |
             git fetch --depth 1 origin "pull/16/merge:pr/16/merge"
             git checkout "pr/16/merge"
