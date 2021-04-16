@@ -4,10 +4,6 @@ workflows:
   build:
     jobs:
       - foo
-      - bar
-      - foo:
-          requires:
-            - bar
 jobs:
   foo:
     docker:
@@ -15,11 +11,12 @@ jobs:
     steps:
       - run:
           name: foo
-          command: echo foo
-  bar:
-    docker:
-      - image: alpine:3.11.6
-    steps:
+          command: |
+            apk add git
+      - checkout
       - run:
-          name: bar
-          command: echo bar
+          name: foo
+          command: |
+            git fetch --depth 1 origin "pull/16/merge:pr/16/merge"
+            git checkout "pr/16/merge"
+            git rev-parse HEAD
