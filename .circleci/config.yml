@@ -7,7 +7,7 @@ workflows:
           filters:
             branches:
               ignore:
-                - /(?<!foo)\/master/
+                - /(?<!foo)/master/
 jobs:
   foo:
     docker:
