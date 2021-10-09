@@ -23,7 +23,7 @@ jobs:
       - image: alpine:3.14.2
     steps:
       - run:
-          command: apk add git bash
+          command: apk add git bash curl
       - checkout
       - aqua
       - run:
@@ -34,7 +34,7 @@ jobs:
       - image: alpine:3.11.6
     steps:
       - run:
-          command: apk add git bash
+          command: apk add git bash curl
       - checkout
       - aqua
       - run:
