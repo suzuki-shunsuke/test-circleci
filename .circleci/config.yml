@@ -6,8 +6,10 @@ orbs:
 workflows:
   build:
     jobs:
-      - foo
+      - foo:
+          context: suzuki-shunsuke
       - bar:
+          context: suzuki-shunsuke
           requires:
             - foo
 commands:
