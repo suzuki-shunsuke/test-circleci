@@ -16,7 +16,7 @@ jobs:
           command: |
             apk add git curl
       - checkout
-      - aqua:
+      - aqua/aqua:
           aqua_version: v2.9.0
       - run:
           command: |
