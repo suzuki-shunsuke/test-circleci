@@ -1,25 +1,24 @@
 version: 2.1
 
+orbs:
+  aqua: aquaproj/aqua@dev:c72fb3e0c46bb921f9bc9922b1b32df13667b30f
+
 workflows:
   build:
     jobs:
       - foo
-      - bar
-      - foo:
-          requires:
-            - bar
 jobs:
   foo:
     docker:
-      - image: alpine:3.11.6
+      - image: alpine:3.18.2
     steps:
       - run:
-          name: foo
-          command: echo foo
-  bar:
-    docker:
-      - image: alpine:3.11.6
-    steps:
+          command: |
+            apk add git curl
+      - checkout
+      - aqua:
+          aqua_version: v2.9.0
       - run:
-          name: bar
-          command: echo bar
+          command: |
+            command -v circleci
+            circleci version
