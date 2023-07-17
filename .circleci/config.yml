@@ -14,7 +14,7 @@ jobs:
     steps:
       - run:
           command: |
-            apk add git curl
+            apk add git curl bash
       - checkout
       - aqua/aqua:
           aqua_version: v2.9.0
