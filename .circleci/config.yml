@@ -19,5 +19,4 @@ jobs:
       - checkout
       - aqua/aqua:
           aqua_version: v2.10.0-1
-      - aqua/update-checksum:
-          skip_push: true
+      - aqua/update-checksum
