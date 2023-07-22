@@ -1,13 +1,13 @@
 ---
 # aqua - Declarative CLI Version Manager
 # https://aquaproj.github.io/
-# checksum:
-#   enabled: true
-#   require_checksum: true
+checksum:
+  enabled: true
+  require_checksum: true
 #   supported_envs:
 #   - all
 registries:
 - type: standard
   ref: v4.27.0 # renovate: depName=aquaproj/aqua-registry
 packages:
-- name: CircleCI-Public/circleci-cli@v0.1.27054
+- name: int128/ghcp@v1.13.2
