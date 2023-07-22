@@ -16,7 +16,11 @@ jobs:
           command: |
             apt update -y
             apt install -y git curl
-      - checkout
+      - checkout:
+          path: yoo
       - aqua/aqua:
           aqua_version: v2.10.0-1
-      - aqua/update-checksum
+          working_directory: yoo
+      - aqua/update-checksum:
+          git_root_directory: yoo
+          working_directory: yoo/foo
