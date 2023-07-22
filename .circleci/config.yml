@@ -10,11 +10,12 @@ workflows:
 jobs:
   foo:
     docker:
-      - image: alpine:3.18.2
+      - image: debian:12.0
     steps:
       - run:
           command: |
-            apk add git curl bash
+            apt update -y
+            apt install git curl
       - checkout
       - aqua/aqua:
           aqua_version: v2.9.1
