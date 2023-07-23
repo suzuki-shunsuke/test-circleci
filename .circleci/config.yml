@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aqua: aquaproj/aqua@0.3.0
+  aqua: aquaproj/aqua@0.3.2
 
 workflows:
   build:
